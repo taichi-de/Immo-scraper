@@ -1,33 +1,44 @@
-import math
 from flask import Flask
 from flask_cors import CORS
 from bs4 import BeautifulSoup
 import requests
+import math
 
 app = Flask(__name__)
 CORS(app)
 
 @app.route("/", methods=['GET'])
 def fetch_immo_data():
-    page = requests.get("https://www.wg-gesucht.de/wohnungen-in-Muenchen.90.2.1.0.html").text
+    page = requests.get("https://www.immowelt.de/suche/muenchen/wohnungen/mieten?d=true&sd=DESC&sf=TIMESTAMP&sp=1").content
 
     Data = {}
     DOMdocument = BeautifulSoup(page, 'lxml')
 
-    for item in DOMdocument.find_all('div', class_="col-sm-8 card_body"):
+    for item in DOMdocument.find_all('div', class_="EstateItem-4409d"):
+        # print(item.prettify())
+        # TODO: add image url
+        elems = item.find_all('div', class_="KeyFacts-073db")
+        elem = [elem.text for elem in elems][0] # .split('€').split('m')
+        price = elem.split('€')[0]
+        size = elem[elem.find('€')+1:elem.find('m²')]
+        rooms = elem.split('m²')[1]
+        price_per_m2 = math.ceil(int(price)/int(size))
+        # tenant = [tenant.split('|') for tenant in elem]
+        # info = [info for info in tenant] #ok
+        # # info2 = " ".join(info[1].split()) #no
+        # title = " ".join(info[0][0].split())
+        # # city = info[0][1] #no
+        # city = 'city'
 
-        elem = [elem.text.strip().replace('\n', '') for elem in item]
-        tenant = [tenant.split('|') for tenant in elem]
-        info = [info for info in tenant] #ok
-        # info2 = " ".join(info[1].split()) #no
-        title = " ".join(info[0][0].split())
-        # city = info[0][1] #no
-        city = 'city'
-
-        # info: {info2}
+        # info: {info}
+        # title : {title}
+        # city : {city}
         print(f'''
-        title : {title}
-        city : {city}
+        price : {price} €
+        size : {size} m²
+        rooms : {rooms}
+        price per m² : {price_per_m2} €/m²
+
         ''')
 
         # title = tenant[0].split(' ').replace(' ', '') #no?
