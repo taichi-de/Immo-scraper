@@ -47,3 +47,6 @@
 /server/.flaskenv
 
 /server/.env
+
+client/Data.json
+server/text.html

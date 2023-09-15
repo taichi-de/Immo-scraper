@@ -2,27 +2,28 @@
 
 import { Container, Paper, Input, Button, Tabs } from "@mantine/core";
 import axios from "axios";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BsSearch } from "react-icons/bs";
+import { IoLocationSharp } from "react-icons/io5";
+
+type DataType = {
+  title: string;
+  location: string;
+  size: string;
+  rooms: string;
+  price: string;
+  pricePerM2: number;
+};
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<DataType[]>([]);
 
   useEffect(() => {
-    const headers = {
-      Accept: "application/json",
-      "Access-Control-Allow-Origin": "*",
-    };
-
     axios
-      .get("http://localhost:5001", {
-        headers: headers,
-      })
+      .get("http://127.0.0.1:5000/data")
       .then((res) => {
         setData(res.data);
-        console.log("Data: " + res.data);
       })
       .catch((err) => {
         console.error({ err });
@@ -33,7 +34,7 @@ export default function Home() {
   // TODO: add search function
 
   return (
-    <Container py="lg" className="bg-">
+    <Container py="lg">
       <Paper
         shadow="sm"
         radius="lg"
@@ -57,85 +58,56 @@ export default function Home() {
             <Tabs.Tab value="Kauf">Kauf</Tabs.Tab>
           </Tabs.List>
           <Tabs.Panel value="Miete" pt="xs" className="my-5">
-            <div>
-              <ul
-                className="flex justify-around mx-auto px-4 text-slate-500"
-                style={{ listStyle: "none" }}
-              >
-                <li className="">Adresse</li>
-                <li className="">Miete</li>
-                <li className="">Größe</li>
-                <li className="">Zimmer</li>
-                <li className="">Datum/ Uhrzeit</li>
-              </ul>
-            </div>
-            <Link href="#" className="no-underline">
+            {data.slice(0, 5).map((item, i) => (
               <Paper
                 shadow="sm"
                 radius="md"
-                className="flex justify-around bg-slate-50 hover:bg-slate-50/50 text-left py-6 no-underline"
+                key={i}
+                className="grid grid-cols-4 gap-12 bg-slate-50 hover:bg-slate-50/50 mb-4 p-6 no-underline"
               >
-                <p className="">Muenchen</p>
-                <p className="">500€</p>
-                <p className="">80</p>
-                <p className="">2</p>
-                <p className="">08.08.2023</p>
+                <div className="col-span-1 bg-blue-400 rounded-lg w-[180px] h-[150px]" />
+                <div className="col-span-3 ml-4 p-2">
+                  <h2 className="text-base m-0 text-gray-800">{item.title}</h2>
+                  <div className="flex">
+                    <p className="flex mr-5">
+                      <IoLocationSharp className="mt-1 mr-1 text-pink-400" />
+                      {item.location}
+                    </p>
+                  </div>
+                  <div className="flex">
+                    <p className="my-0">{item.price} €</p>
+                    <p className="my-0 mx-5">{item.size} m²</p>
+                    <p className="my-0">{item.rooms}</p>
+                  </div>
+                </div>
               </Paper>
-            </Link>
-            <Link href="#" className="no-underline">
-              <Paper
-                shadow="sm"
-                radius="md"
-                className="flex justify-around bg-slate-50 hover:bg-slate-50/50 text-left py-6 no-underline"
-              >
-                <p className="">Muenchen</p>
-                <p className="">2000€</p>
-                <p className="">110</p>
-                <p className="">4</p>
-                <p className="">11.12.2023</p>
-              </Paper>
-            </Link>
+            ))}
           </Tabs.Panel>
-
           <Tabs.Panel value="Kauf" pt="xs" className="my-5">
-            <div>
-              <ul
-                className="flex justify-around mx-auto px-4 text-slate-500"
-                style={{ listStyle: "none" }}
-              >
-                <li className="">Adresse</li>
-                <li className="">Miete</li>
-                <li className="">Größe</li>
-                <li className="">Zimmer</li>
-                <li className="">Datum/ Uhrzeit</li>
-              </ul>
-            </div>
-            <Link href="#" className="no-underline">
+            {data.slice(6, 10).map((item, i) => (
               <Paper
                 shadow="sm"
                 radius="md"
-                className="flex justify-around bg-slate-50 hover:bg-slate-50/50 text-left py-6 no-underline"
+                key={i}
+                className="grid grid-cols-4 gap-12 bg-slate-50 hover:bg-slate-50/50 mb-4 p-6 no-underline"
               >
-                <p className="">Muenchen</p>
-                <p className="">500€</p>
-                <p className="">80</p>
-                <p className="">2</p>
-                <p className="">08.08.2023</p>
+                <div className="col-span-1 bg-blue-400 rounded-lg w-[180px] h-[150px]" />
+                <div className="col-span-3 ml-4 p-2">
+                  <h2 className="text-base m-0 text-gray-800">{item.title}</h2>
+                  <div className="flex">
+                    <p className="flex mr-5">
+                      <IoLocationSharp className="mt-1 mr-1 text-pink-400" />
+                      {item.location}
+                    </p>
+                  </div>
+                  <div className="flex text-base">
+                    <p className="my-0">{item.price} €</p>
+                    <p className="my-0 mx-5">{item.size} m²</p>
+                    <p className="my-0">{item.rooms}</p>
+                  </div>
+                </div>
               </Paper>
-            </Link>
-            <Link href="#" className="no-underline">
-              <Paper
-                shadow="sm"
-                radius="md"
-                className="flex justify-around bg-slate-50 hover:bg-slate-50/50 text-left py-6 no-underline"
-              >
-                <p className="">Muenchen</p>
-                <p className="">2000€</p>
-                <p className="">110</p>
-                <p className="">4</p>
-                <p className="">11.12.2023</p>
-              </Paper>
-            </Link>
+            ))}
           </Tabs.Panel>
         </Tabs>
       ) : (
